@@ -142,9 +142,11 @@ def tabon():
 ############ ipaddress functions ###################
 
 def findholes(ipaddresslist, terse=True):
-    import ipaddress
+    from ipaddress import ip_address
     ipaddresslist.sort(key=lambda x: ipaddress.ip_address(x))
+    start_ip_as_int = int(ipaddress.ip_address(ipaddresslist[0]))
+    end_ip_as_int = int(ip_address(ipaddresslist[-1]))
     if terse:
-        return [ str(ipaddress.ip_address(num_ip)) for num_ip in range(int(ipaddress.ip_address(ipaddresslist[0])),int(ipaddress.ip_address(ipaddresslist[-1])) + 1) if str(ipaddress.ip_address(num_ip)) not in ipaddresslist]
+        return [ str(ip_address(ip_as_int)) for ip_as_int in range(start_ip_as_int, end_ip_as_int + 1) if str(ip_address(ip_as_int)) not in ipaddresslist ]
 
 
