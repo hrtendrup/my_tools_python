@@ -127,7 +127,10 @@ class IPv4NetworkArray(list):
             ipadd = self.ipaddress.IPv4Address(ipadd)
         except ValueError:
             raise
-        
+        for n in self.netlist:
+            if ipadd in n:
+                returnlist.append(str(n))
+        return IPv4NetworkArray(returnlist)
         
         
 ############ functions ###############
