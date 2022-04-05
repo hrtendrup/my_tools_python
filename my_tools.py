@@ -142,11 +142,19 @@ def tabon():
 ############ ipaddress functions ###################
 
 def findholes(ipaddresslist, terse=True):
+    '''
+    returns list of ipaddresses NOT in the list between the lowest IP and the highest IP
+    verbose mode returns the list of ipaddresses with empty strings taking the place of 
+    missing IP addresses
+    note: this list can be very long if including multiple subnets, by accident or otherwise
+    '''
     from ipaddress import ip_address
     ipaddresslist.sort(key=lambda x: ipaddress.ip_address(x))
     start_ip_as_int = int(ipaddress.ip_address(ipaddresslist[0]))
     end_ip_as_int = int(ip_address(ipaddresslist[-1]))
     if terse:
         return [ str(ip_address(ip_as_int)) for ip_as_int in range(start_ip_as_int, end_ip_as_int + 1) if str(ip_address(ip_as_int)) not in ipaddresslist ]
+    else:
+        return [ str(ip_address(ip_as_int)) if str(ip_address(ip_as_int)) in ipaddresslist else '' for ip_as_int in range(start_ip_as_int, end_ip_as_int + 1) ]
 
 
