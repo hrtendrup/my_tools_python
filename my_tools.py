@@ -89,35 +89,46 @@ class IPv4NetworkArray(list):
     holds a list of networks
     '''
     import ipaddress
-    def __init__(self,/,*args,**kwargs):
+    def __init__(self, *args, **kwargs):
         '''
         '''
-        super().__init__(*args,**kwargs)
+        super().__init__(*args, **kwargs)
         self.netlist=[]
         try:
             for n in self:
-                self.netlist.append(ipaddress.IPv4Network(n))
+                self.netlist.append(self.ipaddress.IPv4Network(n))
         except ValueError:
             raise
-        self.sort(key = lambda x: ipaddress.IPv4Network(x))
+        self.sort(key = lambda x: self.ipaddress.IPv4Network(x))
         self.netlist.sort()
     def __contains__(self,ipadd):
         '''
         func to check list of nets at once
         '''
         try:
-            ipadd = ipaddress.IPv4Address(ipadd)
+            ipadd = self.ipaddress.IPv4Address(ipadd)
             for n in self.netlist:
                 if ipadd in n:
                     return True
-        except ipaddress.AddressValueError:
+        except self.ipaddress.AddressValueError:
             try:
-                ipnet = ipaddress.IPv4Network(ipadd)
+                ipnet = self.ipaddress.IPv4Network(ipadd)
                 if ipnet in self.netlist:
                     return True
             except:
                 raise ValueError("Not a IP address or IP network or format incorrect")
         return False
+    def find_all_nets_for_ip(self, ipadd):
+        '''
+        returns list of networks a given IP is found in
+        '''
+        returnlist = []
+        try:
+            ipadd = self.ipaddress.IPv4Address(ipadd)
+        except ValueError:
+            raise
+        
+        
         
 ############ functions ###############
 
@@ -158,3 +169,4 @@ def findholes(ipaddresslist, terse=True):
         return [ str(ip_address(ip_as_int)) if str(ip_address(ip_as_int)) in ipaddresslist else '' for ip_as_int in range(start_ip_as_int, end_ip_as_int + 1) ]
 
 
+############### ignore below here ##########
