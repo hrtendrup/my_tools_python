@@ -37,10 +37,8 @@ class MacAddress(object):
         self.form_b = ':'.join(self.bytes)
         self._is_global()
         self._is_group()
-#
     def __repr__(self):
         return self.form_a
-#
     def bitswap_mac(self):
         '''
         swaps bit order for eachbyte of a mac
@@ -58,7 +56,6 @@ class MacAddress(object):
             bin2 = bin1[-1::-1]
             reverse_bytes.append(format(int(bin2,2),'02x'))
         return '.'.join([reverse_bytes[i] + reverse_bytes[i+1] for i in range(0,len(reverse_bytes),2)])
-#
     def _is_group(self):
         '''
         checks the group/individual bit (least sig bit of first byte)
@@ -71,7 +68,6 @@ class MacAddress(object):
         else:
             self.isGroup=False
             self.isMulticast=False
-#
     def _is_global(self):
         '''
         checks the global/local bit (next to least sig bit of first byte)
@@ -97,10 +93,15 @@ class IPv4NetworkArray(list):
         try:
             for n in self:
                 self.netlist.append(self.ipaddress.IPv4Network(n))
-        except ValueError:
-            raise
-        self.sort(key = lambda x: self.ipaddress.IPv4Network(x))
-        self.netlist.sort()
+        except (self.ipaddress.AddressValueError, self.ipaddress.NetmaskValueError):
+            raise ValueError("Not a IP network or format incorrect: %s" % n)
+        ## self.sort(key = lambda x: self.ipaddress.IPv4Network(x))
+        ## self.netlist.sort()
+    def __add__(self, value):
+        '''
+        returns IPv4NetworkArray instance of self + value
+        '''
+        return(IPv4NetworkArray(super().__add__(value)))
     def __contains__(self,ipadd):
         '''
         func to check list of nets at once
@@ -115,18 +116,62 @@ class IPv4NetworkArray(list):
                 ipnet = self.ipaddress.IPv4Network(ipadd)
                 if ipnet in self.netlist:
                     return True
-            except:
-                raise ValueError("Not a IP address or IP network or format incorrect")
+            except (self.ipaddress.AddressValueError, self.ipaddress.NetmaskValueError):
+                raise ValueError("Not a IP address or IP network or format incorrect: %s" % ipadd)
         return False
+    def __delitem__(self, key, /):
+        '''
+        delete self[key]
+        there is (currently) no sanity check between self and self.netlist
+        if you muck about self.netlist, the object will not behave well
+        '''
+        super().__delitem__(key)
+        self.netlist.__delitem__(key)
+    def __setitem__(self, key, value, /):
+        '''
+        sets self[key] = value
+        '''
+        try:
+            ipnet = self.ipaddress.IPv4Network(value)
+        except (self.ipaddress.AddressValueError, self.ipaddress.NetmaskValueError):
+            raise ValueError("Not a IP network or format incorrect: %s" % value)
+        super().__setitem__(key,value)
+        self.netlist[key] = ipnet
+    def _overridden_error(self):
+        raise AttributeError()
+        
+    def append(self, obj):
+        '''
+        '''
+        try:
+            self.netlist.append(self.ipaddress.IPv4Network(obj))
+        except (self.ipaddress.AddressValueError, self.ipaddress.NetmaskValueError):
+            raise ValueError("Not a IP network or format incorrect: %s" % obj)
+        else:
+            super().append(obj)
+    def sort(self, /, *, key=None, reverse=False):
+        '''
+        sorts array in place
+        '''
+        super().sort(key = lambda x: self.ipaddress.IPv4Network(x),reverse=reverse)
+        self.netlist.sort(key=key,reverse=reverse)
+    def new_sort(self, /, *, key=None, reverse=False):
+        '''
+        returns a new instance of Network Array object
+        sorted(networkarray) will return a list
+        '''
+        new = IPv4NetworkArray(self)
+        new.sort(key=key,reverse=reverse)
+        return new
     def find_all_nets_for_ip(self, ipadd):
         '''
-        returns list of networks a given IP is found in
+        returns intance of IPv4NetworkArray of networks a given IP is found in
         '''
         returnlist = []
         try:
             ipadd = self.ipaddress.IPv4Address(ipadd)
-        except ValueError:
-            raise
+        except (self.ipaddress.AddressValueError, self.ipaddress.NetmaskValueError):
+            raise ValueError("Not a IP address or IP network or format incorrect: %s" % ipadd)
         for n in self.netlist:
             if ipadd in n:
                 returnlist.append(str(n))
