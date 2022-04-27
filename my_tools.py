@@ -155,6 +155,18 @@ class IPv4NetworkArray(list):
         '''
         super().sort(key = lambda x: self.ipaddress.IPv4Network(x),reverse=reverse)
         self.netlist.sort(key=key,reverse=reverse)
+    def pop(self, /, *, ipnetobject=False):
+        '''
+        returns self[-1] or self.netlist[-1] while retaining parity of each
+        assumes order has not been adjusted manually
+        if ipnetobject is True, returns IPv4Network object, else string
+        '''
+        if ipnetobject:
+            super().pop()
+            return self.netlist.pop()
+        else:
+            self.netlist.pop()
+            return super().pop()
     def new_sort(self, /, *, key=None, reverse=False):
         '''
         returns a new instance of Network Array object
