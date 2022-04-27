@@ -95,12 +95,6 @@ class IPv4NetworkArray(list):
                 self.netlist.append(self.ipaddress.IPv4Network(n))
         except (self.ipaddress.AddressValueError, self.ipaddress.NetmaskValueError):
             raise ValueError("Not a IP network or format incorrect: %s" % n)
-        ## removed old commennted code for sorting after instantiation
-        ## lists are ordered data sets and should retain that property
-        ## there's a sort method for a reason if sorting is desired
-        ## 
-        ## normalizing the string represnetation of the array to be how ipaddress would show the string for a network
-        ## actually going to try this with __getitem__ rather than normalizing the native list
     def __getitem__(self, key, /):
         '''
         returns the string value of IPv4Network object
