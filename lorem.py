@@ -1,3 +1,10 @@
+'''
+just a collection of variables filled with Lorem Ipsum
+ipsum = 1 paragraph
+ipsum_5 = 5 paragraphs
+ipsum_15 = 15 paragraphs
+'''
+
 ipsum = """Lorem ipsum dolor sit amet, consectetur adipiscing elit. In nec leo eget ligula fringilla malesuada. Aenean blandit, arcu vel consequat sagittis, elit sapien,
 sit amet commodo arcu magna eget ante. Praesent hendrerit non odio sit amet ultricies. Aliquam volutpat at risus quis pharetra. Nullam at ligula volutpat, condimentum quam
 vitae, tempus odio. Ut tincidunt tincidunt massa a tempor. Curabitur a tincidunt nisi. Aenean ut nibh in neque posuere facilisis in at turpis. Ut rhoncus quis mauris sit amet
