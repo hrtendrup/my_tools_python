@@ -238,4 +238,9 @@ def findholes(ipaddresslist, terse=True):
         return [ str(ip_address(ip_as_int)) if str(ip_address(ip_as_int)) in ipaddresslist else '' for ip_as_int in range(start_ip_as_int, end_ip_as_int + 1) ]
 
 
+def summarize(ipl, preflen):
+    '''
+    '''
+    from ipaddress import ip_address as add
+    return sort(list({add(((2 ** preflen - 1) << (32 - preflen)) & int(add(ip))) for ip in ipl}))
 ############### ignore below here ##########
